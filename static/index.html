@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Traveling Salesman Visualization</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- 
+    <script src="..\src\src.js"></script>
+    -->
+</head>
+<body>
+    <div class="container-fluid" style="width:100vw;">
+        <div class="row row-no-gutters">
+            <div class="col-sm-10 order-sm-2">
+                <div id='mapbox' style="height:100vh"></div>
+                <script>
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaG10YXlsb3IyMDAwIiwiYSI6ImNtMjVndGNxYTBzMWkyam9oZzRkaGViaHkifQ.Qz8xkQt513SD8o7JRanfgA';
+                    const map = new mapboxgl.Map({
+                        container: 'mapbox', // container ID
+                        style: 'mapbox://styles/mapbox/dark-v10',
+                        center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+                        zoom: 9, // starting zoom
+                        maxPitch: 0
+                    });
+                </script>
+            </div>
+            <div class="col-sm-2 order-1">
+                <div id="header">
+                    <div>TSP Visualizer</div>
+                    <span>
+                        <a href="https://github.com/talkon2000/TravelingSalesmanVisual" title="Source code">
+                            <img src="./github-mark.png" style="height: 32px">
+                        </a>
+                        <p>ℹ</p>
+                    </span>
+                </div>
+                <div class="small">Visualize algorithms for the traveling salesman problem. Use the controls below to plot points, choose an algorithm, and control execution.
+                    (Hint: try a construction alogorithm followed by an improvement algorithm)</div>
+                <div>-----</div>
+                <div>current best</div>
+                <div>evaluating</div>
+                <div>running for</div>
+                <div >algorithm box
+                    <div>algorithm</div>
+                    <div>algorithm dropdown</div>
+                    <div>tooltip button</div>
+                    <div>controls</div>
+                    <div>delay</div>
+                </div>
+                <div>best path with toggle</div>
+                <div>evaluated paths with toggle</div>
+                <div>evaluated steps with toggle</div>
+                <div>-----</div>
+                <div>points with buttons</div>
+                <div>slider with number of random points</div>
+                <div>possible paths</div>
+                <div>-----</div>
+                <div>dark mode with toggle</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
