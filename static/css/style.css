@@ -45,9 +45,11 @@ body {
     margin: 16px;
 }
 
+/*
 .algDropdown {
 
 }
+*/
 
 .buttonGroup {
     width: 100%;
@@ -59,7 +61,7 @@ body {
     width: 100%;
 }
 
-.toggleItem {
+.flexedSpaceBetween {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
