@@ -1,6 +1,6 @@
-import BindingClass from './utils/bindingClass';
-import DataStore from './utils/dataStore';
-import MapBox from 'https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js';
+import BindingClass from './utils/bindingClass.js';
+import DataStore from './utils/dataStore.js';
+import 'https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js';
 
 export default class Page extends BindingClass {
 
@@ -13,11 +13,11 @@ export default class Page extends BindingClass {
      * Add the map to the page.
      */
     async mount() {
-        MapBox.accessToken = 'pk.eyJ1Ijoiam9zaG10YXlsb3IyMDAwIiwiYSI6ImNtMjVndGNxYTBzMWkyam9oZzRkaGViaHkifQ.Qz8xkQt513SD8o7JRanfgA';
+        // not secret access
+        mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaG10YXlsb3IyMDAwIiwiYSI6ImNtMjVndGNxYTBzMWkyam9oZzRkaGViaHkifQ.Qz8xkQt513SD8o7JRanfgA';
 
-        const mapContainer = document.getElementById("mapbox");
-        const map = new MapBox.Map({
-            container: mapContainer, // container ID
+        const map = new mapboxgl.Map({
+            container: 'mapbox', // container ID
             style: 'mapbox://styles/mapbox/dark-v8',
             center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
             zoom: 9, // starting zoom
@@ -32,7 +32,6 @@ export default class Page extends BindingClass {
  */
 const main = async () => {
     const page = new Page();
-    document.getElementById("bestDistance").innerHTML = "pasta";
     page.mount();   
 };
 
