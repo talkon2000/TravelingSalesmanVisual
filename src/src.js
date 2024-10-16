@@ -1,16 +1,18 @@
 import BindingClass from './utils/bindingClass.js';
 import DataStore from './utils/dataStore.js';
 import 'https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js';
+import Generator from './generation.js';
 
 export default class Page extends BindingClass {
 
     constructor() {
             super();
-            this.bindClassMethods(['mount'], this);
+            this.bindClassMethods(['mount', 'generateRandomPoints'], this);
             this.dataStore = new DataStore();
+            this.generator = new Generator();
     }
     /**
-     * Add the map to the page.
+     * Add the map to the page and set up event listeners for button.
      */
     async mount() {
         // not secret access
@@ -24,6 +26,14 @@ export default class Page extends BindingClass {
             maxPitch: 0
         });
         this.dataStore.set("map", map);
+
+        document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);
+    }
+
+    async generateRandomPoints() {
+        let points = this.generator.generatePoints(this.dataStore.get("map").getBounds());
+        console.log(points);
+        //TO DO: draw the points
     }
 }
 
@@ -32,7 +42,12 @@ export default class Page extends BindingClass {
  */
 const main = async () => {
     const page = new Page();
-    page.mount();   
-};
+    page.mount();
+
+    //leaving this console log here for debugging
+    console.log(page.dataStore.get("map"));
+}
+
+
 
 window.addEventListener('DOMContentLoaded', main);
