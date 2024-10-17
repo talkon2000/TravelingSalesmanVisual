@@ -13,11 +13,11 @@ export default class Generator extends BindingClass {
     */
     generatePoints(bounds) {
         let numRandomPoints = document.getElementById("numRandomPoints").value;
-        let randPoints = {};
+        let randPoints = [];
         for (let i = 0; i < numRandomPoints; i++) {
-            let p = [];
-            p[0] = this.boundedRand(bounds._sw.lat, bounds._ne.lat);
-            p[1] = this.boundedRand(bounds._sw.lng, bounds._sw.lng);
+            let p = {};
+            p.lat = this.boundedRand(bounds._sw.lat, bounds._ne.lat);
+            p.lng = this.boundedRand(bounds._sw.lng, bounds._ne.lng);
             randPoints[i] = p;
         }
 

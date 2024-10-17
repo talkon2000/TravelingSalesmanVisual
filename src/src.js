@@ -2,6 +2,7 @@ import BindingClass from './utils/bindingClass.js';
 import DataStore from './utils/dataStore.js';
 import 'https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js';
 import Generator from './generation.js';
+import Artist from './drawOnMap.js';
 
 export default class Page extends BindingClass {
 
@@ -10,6 +11,7 @@ export default class Page extends BindingClass {
             this.bindClassMethods(['mount', 'generateRandomPoints'], this);
             this.dataStore = new DataStore();
             this.generator = new Generator();
+            this.artist = new Artist();
     }
     /**
      * Add the map to the page and set up event listeners for button.
@@ -34,7 +36,9 @@ export default class Page extends BindingClass {
         let points = this.generator.generatePoints(this.dataStore.get("map").getBounds());
         console.log(points);
         //TO DO: draw the points
+        console.log(this.artist.drawNewPoints(points, this.dataStore.get("map")));
     }
+
 }
 
 /**
