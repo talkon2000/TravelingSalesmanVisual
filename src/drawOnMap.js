@@ -4,44 +4,67 @@ export default class Artist extends BindingClass {
 
     constructor() {
         super();
-        this.bindClassMethods(['drawPoint', 'drawNewPoints', 'removePoints', 'drawLines', 'removeLines'], this);
+        this.bindClassMethods(['addFeature', 'drawRandomPoints', 'drawDefaultPoints'], this);
     }
 
-    drawPoint(geoPoint, map) {
-
+    addFeature(p) {
+        let feature = {};
+        feature.type = "Feature";
+        feature.geometry = {
+            "type": "Point",
+            "coordinates": [p.lng, p.lat]
+        };
+        return feature;
     }
 
-    drawNewPoints(geoPoints, map) {
-        this.removePoints();
-        let displayPointArray = [];
-        let drawLayer = document.getElementById("drawLayer");
-        geoPoints.forEach(p => {
-            let displayPoint = map.project(p);
-            displayPointArray.push(displayPoint);
-            let pointNode = document.createElement("img");
-            pointNode.src = "./information.png";
-            pointNode.classList.add("drawnPoint");
-            pointNode.style.right = displayPoint.x + "px";
-            pointNode.style.bottom = displayPoint.y + "px";
-            pointNode.style.zIndex = "1";
-            pointNode.style.height = "8px";
-            drawLayer.append(pointNode);
-        });
-        return displayPointArray;
-    }
-
-    removePoints() {
-        let drawLayer = document.getElementById("drawLayer");
-        while (drawLayer.firstChild) {
-            drawLayer.removeChild(drawLayer.firstChild);
+    drawRandomPoints(geoPoints, map) {
+        //Remove original source data and layer
+        map.removeLayer("points");
+        if (map.getSource('customPoints')) {
+            map.removeSource('customPoints');
         }
+
+        //Generates the points in GEOJSON format
+        let data = { "type": "FeatureCollection", "features": [] };
+        for (let p = 0; p < geoPoints.length; p++) {
+            data.features.push(this.addFeature(geoPoints[p]));
+        }
+        
+        //Re-adds the source and layer
+        map.addSource('customPoints', { type: 'geojson', data: data });
+        map.addLayer({
+            id: 'points',
+            type: 'symbol',
+            source: 'customPoints',
+            layout: {
+                'icon-image': 'mapPin',
+                'icon-size': .06
+            }
+        });
     }
 
-    drawLines() {
-
-    }
-
-    removeLines() {
-
+    async drawDefaultPoints(map) {
+        //Remove original source data and layer
+        if (map.getLayer("points")) {
+            map.removeLayer("points");
+        }
+        if (map.getSource('customPoints')) {
+            map.removeSource('customPoints');
+        }
+        //Fetch the default points JSON
+        const file = await fetch('../static/defaultPoints.geojson');
+        const data = await file.json();
+        //Inializes default points source
+        map.addSource('defaultPoints', { type: 'geojson', data: data });
+        //Creates the layer with default points as the source
+        map.addLayer({
+            id: 'points',
+            type: 'symbol',
+            source: 'defaultPoints',
+            layout: {
+                'icon-image': 'mapPin',
+                'icon-size': .06
+            }
+        });
     }
 }
