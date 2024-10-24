@@ -8,7 +8,7 @@ export default class Page extends BindingClass {
 
     constructor() {
             super();
-            this.bindClassMethods(['mount', 'generateRandomPoints'], this);
+            this.bindClassMethods(['mount', 'generateRandomPoints', 'resetToDefaultPoints'], this);
             this.dataStore = new DataStore();
             this.generator = new Generator();
             this.artist = new Artist();
@@ -40,13 +40,16 @@ export default class Page extends BindingClass {
         this.dataStore.set("map", map);
 
         document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);
+        document.getElementById("resetToDefault").addEventListener("click", this.resetToDefaultPoints);
     }
 
     async generateRandomPoints() {
         let points = this.generator.generatePoints(this.dataStore.get("map").getBounds());
-        console.log(points);
-        //TO DO: draw the points
-        console.log(this.artist.drawRandomPoints(points, this.dataStore.get("map")));
+        this.artist.drawRandomPoints(points, this.dataStore.get("map"));
+    }
+
+    async resetToDefaultPoints() {
+        this.artist.drawDefaultPoints(this.dataStore.get("map"));
     }
 
 }

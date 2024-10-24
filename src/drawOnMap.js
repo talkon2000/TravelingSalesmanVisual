@@ -48,8 +48,8 @@ export default class Artist extends BindingClass {
         if (map.getLayer("points")) {
             map.removeLayer("points");
         }
-        if (map.getSource('customPoints')) {
-            map.removeSource('customPoints');
+        if (map.getSource("defaultPoints")) {
+            map.removeSource("defaultPoints");
         }
         //Fetch the default points JSON
         const file = await fetch('../static/defaultPoints.geojson');
