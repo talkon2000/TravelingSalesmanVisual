@@ -27,6 +27,22 @@ export default class Page extends BindingClass {
             zoom: 9, // starting zoom
             maxPitch: 0
         });
+
+        map.on('load', () => {
+            map.addSource('defaultPoints', { type: 'geojson', data: '../static/defaultPoints.geojson' });
+            map.loadImage(mapPin, (error, image) => {
+                if (error) throw error;
+                map.addImage('mapPin', image);
+            })
+            map.addLayer({
+                id: 'points',
+                type: 'symbol',
+                source: 'defaultPoints',
+                layout: {
+                    'icon-image': 'mapPin'
+                }
+            })            
+        })
         this.dataStore.set("map", map);
 
         document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);

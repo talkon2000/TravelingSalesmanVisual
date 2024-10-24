@@ -4,7 +4,7 @@ export default class Artist extends BindingClass {
 
     constructor() {
         super();
-        this.bindClassMethods(['drawPoints', 'removePoints', 'drawLines', 'removeLines'], this);
+        this.bindClassMethods(['drawPoint', 'drawNewPoints', 'removePoints', 'drawLines', 'removeLines'], this);
     }
 
     drawPoint(geoPoint, map) {
