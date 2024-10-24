@@ -20,6 +20,7 @@ export default class Page extends BindingClass {
         // not secret access
         mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaG10YXlsb3IyMDAwIiwiYSI6ImNtMjVndGNxYTBzMWkyam9oZzRkaGViaHkifQ.Qz8xkQt513SD8o7JRanfgA';
 
+        //Instantiates the map
         const map = new mapboxgl.Map({
             container: 'mapbox', // container ID
             style: 'mapbox://styles/mapbox/dark-v8',
@@ -28,21 +29,14 @@ export default class Page extends BindingClass {
             maxPitch: 0
         });
 
-        map.on('load', () => {
-            map.addSource('defaultPoints', { type: 'geojson', data: '../static/defaultPoints.geojson' });
-            map.loadImage(mapPin, (error, image) => {
+        //Once the map loads, sets up the map layer
+        map.on('load', async () => {
+            map.loadImage('../static/location-pin.png', (error, image) => {
                 if (error) throw error;
                 map.addImage('mapPin', image);
-            })
-            map.addLayer({
-                id: 'points',
-                type: 'symbol',
-                source: 'defaultPoints',
-                layout: {
-                    'icon-image': 'mapPin'
-                }
-            })            
-        })
+            });
+            this.artist.drawDefaultPoints(map);
+        });
         this.dataStore.set("map", map);
 
         document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);
@@ -52,7 +46,7 @@ export default class Page extends BindingClass {
         let points = this.generator.generatePoints(this.dataStore.get("map").getBounds());
         console.log(points);
         //TO DO: draw the points
-        console.log(this.artist.drawNewPoints(points, this.dataStore.get("map")));
+        console.log(this.artist.drawRandomPoints(points, this.dataStore.get("map")));
     }
 
 }
