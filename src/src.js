@@ -8,24 +8,26 @@ export default class Page extends BindingClass {
 
     constructor() {
             super();
-            this.bindClassMethods(['mount', 'generateRandomPoints', 'resetToDefaultPoints'], this);
+            this.bindClassMethods(['mount', 'generateRandomPoints', 'resetToDefaultPoints',
+                 'startManualSelection', 'stopManualSelection', 'manualClickEvent'], this);
             this.dataStore = new DataStore();
             this.generator = new Generator();
             this.artist = new Artist();
     }
+
     /**
      * Add the map to the page and set up event listeners for button.
      */
     async mount() {
-        // not secret access
+        //not secret access
         mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaG10YXlsb3IyMDAwIiwiYSI6ImNtMjVndGNxYTBzMWkyam9oZzRkaGViaHkifQ.Qz8xkQt513SD8o7JRanfgA';
 
         //Instantiates the map
         const map = new mapboxgl.Map({
             container: 'mapbox', // container ID
             style: 'mapbox://styles/mapbox/dark-v8',
-            center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
-            zoom: 9, // starting zoom
+            center: [-98.35, 39.5], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+            zoom: 3, // starting zoom
             maxPitch: 0
         });
 
@@ -39,19 +41,79 @@ export default class Page extends BindingClass {
         });
         this.dataStore.set("map", map);
 
+        //event listeners for point selection buttons
         document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);
         document.getElementById("resetToDefault").addEventListener("click", this.resetToDefaultPoints);
+        document.getElementById("manualSelection").addEventListener("click", this.startManualSelection);
     }
 
     async generateRandomPoints() {
+        //Generates random points and sends them to the artist to draw them
         let points = this.generator.generatePoints(this.dataStore.get("map").getBounds());
         this.artist.drawRandomPoints(points, this.dataStore.get("map"));
     }
 
     async resetToDefaultPoints() {
+        //Uses the artist to draw the default points
         this.artist.drawDefaultPoints(this.dataStore.get("map"));
     }
 
+    async startManualSelection() {
+        //Remove original event listener - this button should act as a toggle
+        const button = document.getElementById("manualSelection");
+        button.removeEventListener("click", this.startManualSelection);
+        button.addEventListener("click", this.stopManualSelection);
+
+        //Change the icon and disable the rest of the buttons
+        button.innerHTML = "Toggled on";
+        document.getElementById("randomButton").disabled = true;
+        document.getElementById("resetToDefault").disabled = true;
+
+        //Remove original source data and layer
+        let map = this.dataStore.get("map");
+        map.removeLayer("points");
+        if (map.getSource('customPoints')) {
+            map.removeSource('customPoints');
+        }
+
+        //Create new empty data source and remake the layer
+        let data = { "type": "FeatureCollection", "features": [] };
+        map.addSource('customPoints', { type: 'geojson', data: data });
+        map.addLayer({
+            id: 'points',
+            type: 'symbol',
+            source: 'customPoints',
+            layout: {
+                'icon-image': 'mapPin',
+                'icon-size': .06,
+                'icon-allow-overlap': true
+            }
+        });
+
+        //Set up listener to draw points based on the lng/lat of the user's click
+        map.on("click", this.manualClickEvent);
+    }
+
+    async stopManualSelection() {
+        let map = this.dataStore.get("map");
+
+        //Reset the event listeners
+        const button = document.getElementById("manualSelection");
+        button.removeEventListener("click", this.stopManualSelection);
+        button.addEventListener("click", this.startManualSelection);
+
+        //Change the icon back and enable the rest of the buttons
+        button.innerHTML = "Toggled off";
+        document.getElementById("randomButton").disabled = false;
+        document.getElementById("resetToDefault").disabled = false;
+
+        //Remove listener for map clicks
+        map.off("click", this.manualClickEvent);
+    }
+
+    manualClickEvent(e) {
+        this.artist.drawSinglePoint(e.lngLat, this.dataStore.get("map"));
+    }
 }
 
 /**
@@ -64,7 +126,6 @@ const main = async () => {
     //leaving this console log here for debugging
     console.log(page.dataStore.get("map"));
 }
-
 
 
 window.addEventListener('DOMContentLoaded', main);
