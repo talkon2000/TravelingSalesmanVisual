@@ -38,7 +38,8 @@ export default class Artist extends BindingClass {
             source: 'customPoints',
             layout: {
                 'icon-image': 'mapPin',
-                'icon-size': .06
+                'icon-size': .06,
+                'icon-allow-overlap': true
             }
         });
     }
@@ -51,11 +52,14 @@ export default class Artist extends BindingClass {
         if (map.getSource("defaultPoints")) {
             map.removeSource("defaultPoints");
         }
+
         //Fetch the default points JSON
         const file = await fetch('../static/defaultPoints.geojson');
         const data = await file.json();
+
         //Inializes default points source
         map.addSource('defaultPoints', { type: 'geojson', data: data });
+
         //Creates the layer with default points as the source
         map.addLayer({
             id: 'points',
@@ -63,8 +67,16 @@ export default class Artist extends BindingClass {
             source: 'defaultPoints',
             layout: {
                 'icon-image': 'mapPin',
-                'icon-size': .06
+                'icon-size': .06,
+                'icon-allow-overlap': true
             }
         });
+    }
+
+    drawSinglePoint(p, map) {
+        let data = map.getSource("customPoints")._data;
+        console.log(data);
+        data.features.push(this.addFeature(p));
+        map.getSource("customPoints").setData(data);
     }
 }
