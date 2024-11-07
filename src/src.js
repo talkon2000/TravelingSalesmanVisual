@@ -9,7 +9,7 @@ export default class Page extends BindingClass {
     constructor() {
             super();
             this.bindClassMethods(['mount', 'generateRandomPoints', 'resetToDefaultPoints',
-                 'startManualSelection', 'stopManualSelection', 'manualClickEvent'], this);
+                 'startManualSelection', 'stopManualSelection', 'manualClickEvent', 'drawLineTest'], this);
             this.dataStore = new DataStore();
             this.generator = new Generator();
             this.artist = new Artist();
@@ -45,6 +45,7 @@ export default class Page extends BindingClass {
         document.getElementById("randomButton").addEventListener("click", this.generateRandomPoints);
         document.getElementById("resetToDefault").addEventListener("click", this.resetToDefaultPoints);
         document.getElementById("manualSelection").addEventListener("click", this.startManualSelection);
+        document.getElementById("startAlgorithm").addEventListener("click", this.drawLineTest);
     }
 
     async generateRandomPoints() {
@@ -113,6 +114,21 @@ export default class Page extends BindingClass {
 
     manualClickEvent(e) {
         this.artist.drawSinglePoint(e.lngLat, this.dataStore.get("map"));
+    }
+
+    drawLineTest() {
+        let map = this.dataStore.get("map");
+        let data = map.getSource(map.getLayer("points").source)._data;
+        let p1 = data.features[0];
+        let p2 = data.features[1];
+        let p3 = data.features[2];
+        let p4 = data.features[3];
+        let p5 = data.features[4];
+        this.artist.drawLine(p1, p2, map);
+        this.artist.drawLine(p2, p3, map);
+        this.artist.drawLine(p3, p4, map);
+        this.artist.drawLine(p4, p5, map);
+
     }
 }
 
