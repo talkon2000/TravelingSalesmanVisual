@@ -204,8 +204,8 @@
         {
             "type": "Feature",
             "geometry": {
-              "type": "Point",
-              "coordinates": [-95.93850443352562, 41.25866564877026]
+                "type": "Point",
+                "coordinates": [-95.93850443352562, 41.25866564877026]
             },
             "properties": {
                 "index": 20
@@ -221,7 +221,7 @@
                 "index": 21
             }
         },
-            {
+        {
             "type": "Feature",
             "geometry": {
                 "type": "Point",
@@ -231,7 +231,7 @@
                 "index": 22
             }
         },
-            {
+        {
             "type": "Feature",
             "geometry": {
                 "type": "Point",
@@ -241,7 +241,7 @@
                 "index": 23
             }
         },
-            {
+        {
             "type": "Feature",
             "geometry": {
                 "type": "Point",

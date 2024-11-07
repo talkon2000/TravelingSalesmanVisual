@@ -122,7 +122,7 @@ export default class Artist extends BindingClass {
     }
 
     drawLine(p1, p2, map, /*color*/) {
-        //Initialize data, ensure lines source exists in the map
+        //Initialize data, ensure "lines" source exists in the map
         let data;
         if (map.getSource("lines")) {
             data = map.getSource("lines")._data;
