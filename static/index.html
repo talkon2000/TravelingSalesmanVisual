@@ -54,8 +54,8 @@
                             <label for="algSelection"></label>
                             <p class="flexedSpaceBetween">
                                 <select name="algSelection" id="algSelection" class="algDropdown">
-                                    <option>Arbitrary Insertion</option>
-                                    <option>opt2</option>
+                                    <option value="arbInsertion">Arbitrary Insertion</option>
+                                    <option value = "opt2">opt2</option>
                                 </select>
                                 <span id="algTooltip">?</span>
                             </p>
@@ -71,7 +71,7 @@
                         <div>
                             <span>DELAY</span>
                             <p>
-                                <input type="range">
+                                <input type="range" id="delay" name="delay" min="0" max="1000" step="50">
                             </p>
                         </div>
                     </div>

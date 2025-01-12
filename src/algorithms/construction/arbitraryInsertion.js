@@ -1,6 +1,9 @@
 import Artist from '../../drawOnMap.js'
 
-export default function arbitraryInsertion(map) {
+export default async function arbitraryInsertion(map) {
+    //This should be set at the beginning of an algorithm to ensure it runs until interrupted.
+    document.getElementById("delay").terminate = false;
+
     const artist = new Artist();
     //Reset lines since this is a construction algorithm
     if (map.getSource("lines")) {
@@ -38,7 +41,12 @@ export default function arbitraryInsertion(map) {
 
     //Draw the path
     for (let i = 1; i < path.length; i++) {
+        //This property will be set by the "play" button. This should terminate execution of this algorithm to prepare for another algorithm to be run. 
+        if (document.getElementById("delay").terminate) {
+            return;
+        }
         artist.drawLine(path[i-1], path[i], map);
+        await sleep(document.getElementById("delay").value);
     }
 }
 
@@ -49,3 +57,5 @@ function pathCost(p1, p2, newPoint) {
 function calcDistance(p1, p2) {
     return Math.sqrt((p1.geometry.coordinates[0] - p2.geometry.coordinates[0]) ^ 2 + (p1.geometry.coordinates[1] - p2.geometry.coordinates[1]) ^ 2);
 }
+
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))

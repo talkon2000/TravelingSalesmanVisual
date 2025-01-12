@@ -119,8 +119,22 @@ export default class Page extends BindingClass {
         this.artist.drawSinglePoint(e.lngLat, this.dataStore.get("map"));
     }
 
-    runAlgorithm() {
-        arbitraryInsertion(this.dataStore.get("map"));
+    async runAlgorithm() {
+        //Halt any ongoing execution and disable "play" button from being used until the algorithm completes.
+        document.getElementById("delay").terminate = true;
+        document.getElementById("startAlgorithm").disabled = true;
+
+        //Run the algorithm currently selected.
+        const algorithm = document.getElementById("algSelection").value;
+        switch(algorithm) {
+            case "arbInsertion":
+                await arbitraryInsertion(this.dataStore.get("map"));
+                break;
+        }
+
+        //Re-enable "play" button
+        document.getElementById("delay").terminate = false;
+        document.getElementById("startAlgorithm").disabled = false;
     }
 }
 
