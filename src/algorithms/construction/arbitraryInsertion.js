@@ -41,12 +41,12 @@ export default async function arbitraryInsertion(map) {
 
     //Draw the path
     for (let i = 1; i < path.length; i++) {
+        await sleep(document.getElementById("delay").value);
         //This property will be set by the "play" button. This should terminate execution of this algorithm to prepare for another algorithm to be run. 
         if (document.getElementById("delay").terminate) {
             return;
         }
         artist.drawLine(path[i-1], path[i], map);
-        await sleep(document.getElementById("delay").value);
     }
 }
 
