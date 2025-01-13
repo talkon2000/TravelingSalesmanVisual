@@ -125,7 +125,7 @@ export default class Page extends BindingClass {
         document.getElementById("startAlgorithm").disabled = true;
 
         //Run the algorithm currently selected.
-        const algorithm = document.getElementById("algSelection").value;
+        const algorithm = document.getElementById("algorithmDropdown").value;
         switch(algorithm) {
             case "arbInsertion":
                 await arbitraryInsertion(this.dataStore.get("map"));

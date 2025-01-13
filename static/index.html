@@ -10,6 +10,13 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css' rel='stylesheet' />
     
     <script type="module" src="..\src\src.js"></script>
+    <script>
+        function algorithmDropdownFunction(value, text) {
+            var dropdown = document.getElementById("algorithmDropdown");
+            dropdown.innerText = text;
+            dropdown.value = value;
+        }
+    </script>
 </head>
 <body>
     <div class="container-fluid" style="width:100vw;">
@@ -52,14 +59,33 @@
                         <div>
                             <span>ALGORITHM</span>
                             <label for="algSelection"></label>
-                            <p class="flexedSpaceBetween">
-                                <select name="algSelection" id="algSelection" class="algDropdown">
-                                    <option value="arbInsertion">Arbitrary Insertion</option>
-                                    <option value = "opt2">opt2</option>
-                                </select>
+                            <div class="flexedSpaceBetween">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="algorithmDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Choose an Algorithm
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><h6 class="dropdown-header">-- Creation Algorithms --</h6></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="arbInsertion">Arbitrary Insertion</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="convexHull">Convex Hull</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="furthestInsertion">Furthest Insertion</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="nearestInsertion">Nearest Insertion</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="nearestNeighbor">Nearest Neighbor</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="simulatedAnnealing">Simulated Annealing</button></li>
+                                        <li><h6 class="dropdown-header">-- Improvement Algorithms --</h6></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="twoOptInversion">Two Option Inversion</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="twoOptReciprocalExchange">Two Option Reciprocal Exchange</button></li>
+                                        <li><h6 class="dropdown-header">-- Exhaustive Algorithms --</h6></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="branchAndBound">Branch and Bound</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="branchAndBoundWithCrossings">Branch and Bound with Crossings</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="depthFirst">Depth First Search</button></li>
+                                        <li><button class="dropdown-item" type="button" onclick="algorithmDropdownFunction(this.value, this.innerText)" value="randomSearch">Random Search</button></li>
+                                    </ul>
+                                </div>
                                 <span id="algTooltip">?</span>
-                            </p>
+                            </div>
                         </div>
+                        <br>
                         <div>
                             <span>CONTROLS</span>
                             <p class="buttonGroup">
