@@ -41,8 +41,13 @@ export default async function arbitraryInsertion(map) {
 
     //Draw the path
     for (let i = 1; i < path.length; i++) {
-        await sleep(document.getElementById("delay").value);
-        //This property will be set by the "play" button. This should terminate execution of this algorithm to prepare for another algorithm to be run. 
+        //This property will be set by the "skip" button.
+        //This loop will sleep between each iteration unless the skip button is pressed.
+        if (!document.getElementById("delay").disabled) {
+            await sleep(document.getElementById("delay").value);
+        }
+        //This property will be set by the "play" or "stop" button. 
+        //This should terminate execution of this algorithm to prepare for another algorithm to be run. 
         if (document.getElementById("delay").terminate) {
             return;
         }
