@@ -10,7 +10,7 @@ export default class Page extends BindingClass {
     constructor() {
             super();
             this.bindClassMethods(['mount', 'generateRandomPoints', 'resetToDefaultPoints',
-                 'startManualSelection', 'stopManualSelection', 'manualClickEvent', 'runAlgorithm'], this);
+                 'startManualSelection', 'stopManualSelection', 'manualClickEvent', 'runAlgorithm', 'skipAlgorithm', 'stopAlgorithm'], this);
             this.dataStore = new DataStore();
             this.generator = new Generator();
             this.artist = new Artist();
@@ -49,6 +49,9 @@ export default class Page extends BindingClass {
 
         //event listeners for algorithm controls
         document.getElementById("startAlgorithm").addEventListener("click", this.runAlgorithm);
+        document.getElementById("skipAlgorithm").addEventListener("click", this.skipAlgorithm);
+        document.getElementById("stopAlgorithm").addEventListener("click", this.stopAlgorithm);
+
     }
 
     async generateRandomPoints() {
@@ -134,7 +137,23 @@ export default class Page extends BindingClass {
 
         //Re-enable "play" button
         document.getElementById("delay").terminate = false;
+        document.getElementById("delay").disabled = false;
         document.getElementById("startAlgorithm").disabled = false;
+    }
+
+    skipAlgorithm() {
+        document.getElementById("delay").disabled = true;
+    }
+
+    async stopAlgorithm() {
+        //Halt any ongoing execution, reset the map
+        document.getElementById("delay").terminate = true;
+
+        //Reset lines
+        await document.getElementById("startAlgorithm").disabled == false;
+        if (this.dataStore.get("map").getSource("lines")) {
+            this.dataStore.get("map").getSource("lines").setData({ "type": "FeatureCollection", "features": [] });
+        }
     }
 }
 
