@@ -3,7 +3,8 @@ import DataStore from './utils/dataStore.js';
 import 'https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js';
 import Generator from './generation.js';
 import Artist from './drawOnMap.js';
-import arbitraryInsertion from './algorithms/construction/arbitraryInsertion.js';
+import { ArbitraryInsertionAlgorithm } from './algorithms/construction/arbitraryInsertion.js';
+import { LoopTimer } from './utils/LoopTimer.js';
 
 export default class Page extends BindingClass {
 
@@ -14,6 +15,7 @@ export default class Page extends BindingClass {
             this.dataStore = new DataStore();
             this.generator = new Generator();
             this.artist = new Artist();
+            this.timer = new LoopTimer();
     }
 
     /**
@@ -51,6 +53,10 @@ export default class Page extends BindingClass {
         document.getElementById("startAlgorithm").addEventListener("click", this.runAlgorithm);
         document.getElementById("skipAlgorithm").addEventListener("click", this.skipAlgorithm);
         document.getElementById("stopAlgorithm").addEventListener("click", this.stopAlgorithm);
+        const slider = document.getElementById("delay");
+        slider.addEventListener('input', () => {
+            this.timer.setInterval(slider.value);
+        });
 
     }
 
@@ -124,33 +130,36 @@ export default class Page extends BindingClass {
 
     async runAlgorithm() {
         //Halt any ongoing execution and disable "play" button from being used until the algorithm completes.
-        document.getElementById("delay").terminate = true;
         document.getElementById("startAlgorithm").disabled = true;
 
         //Run the algorithm currently selected.
         const algorithm = document.getElementById("algorithmDropdown").value;
         switch(algorithm) {
             case "arbInsertion":
-                await arbitraryInsertion(this.dataStore.get("map"));
+                //await arbitraryInsertion(this.dataStore.get("map"));
+                let arbInsertion = new ArbitraryInsertionAlgorithm(this.artist, this.dataStore.get("map"));
+                this.timer = new LoopTimer(arbInsertion.run.bind(arbInsertion), document.getElementById("delay").value);
+                this.timer.start();
                 break;
         }
 
         //Re-enable "play" button
-        document.getElementById("delay").terminate = false;
         document.getElementById("delay").disabled = false;
         document.getElementById("startAlgorithm").disabled = false;
     }
 
     skipAlgorithm() {
-        document.getElementById("delay").disabled = true;
+        //Manually sets delay of LoopTimer to 0
+        this.timer.setInterval(0);
     }
 
-    async stopAlgorithm() {
-        //Halt any ongoing execution, reset the map
-        document.getElementById("delay").terminate = true;
+    stopAlgorithm() {
+        //Halt any ongoing execution
+        if (this.timer != null) {
+            this.timer.stop();
+        }
 
         //Reset lines
-        await document.getElementById("startAlgorithm").disabled == false;
         if (this.dataStore.get("map").getSource("lines")) {
             this.dataStore.get("map").getSource("lines").setData({ "type": "FeatureCollection", "features": [] });
         }

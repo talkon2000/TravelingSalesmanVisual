@@ -121,7 +121,38 @@ export default class Artist extends BindingClass {
         }
     }
 
-    drawLine(p1, p2, map, /*color*/) {
+    drawPath(path, map) {
+        //Ensure "lines" source exists in the map, clear all lines from map to prepare for redrawing new path
+        let data = { "type": "FeatureCollection", "features": [] };
+        if (!map.getSource("lines")) {
+            map.addSource("lines", { type: "geojson", data: data});
+        }
+
+        if (map.getSource("temporaryLines")) {
+            map.getSource("temporaryLines").setData({ "type": "FeatureCollection", "features": [] });
+        }
+        
+        //Crate the line feature, and add it to the data
+        //p1 and p2 should be feature objects
+        for (let i = 0; i < path.length- 1; i++) {
+            data.features.push(this.createLineFeature(path[i], path[i+1], data.features.length));
+        }
+        map.getSource("lines").setData(data);
+
+        if (!map.getLayer("lines")) {
+            map.addLayer({
+                id: 'lines',
+                type: 'line',
+                source: 'lines',
+                paint: {
+                    "line-color": "#000080",
+                    "line-width": 8
+                }
+            });
+        }
+    }
+
+    drawLine(p1, p2, map) {
         //Initialize data, ensure "lines" source exists in the map
         let data;
         if (map.getSource("lines")) {
@@ -144,9 +175,40 @@ export default class Artist extends BindingClass {
                 source: 'lines',
                 paint: {
                     "line-color": "#000080",
-                    "line-width": 10
+                    "line-width": 8
                 }
             });
         }
     }
+
+    /*
+    drawTemporaryLine(p1, p2, map) {
+        //Initialize data, ensure "temporary lines" source exists in the map
+        let data;
+        if (map.getSource("temporaryLines")) {
+            data = map.getSource("temporaryLines")._data;
+        }
+        else {
+            data = { "type": "FeatureCollection", "features": [] };
+            map.addSource("temporaryLines", { type: "geojson", data: data});
+        }
+
+        //Crate the line feature, and add it to the data
+        //p1 and p2 should be feature objects
+        data.features.push(this.createLineFeature(p1, p2, data.features.length));
+        map.getSource("temporaryLines").setData(data);
+
+        if (!map.getLayer("temporaryLines")) {
+            map.addLayer({
+                id: 'temporaryLines',
+                type: 'line',
+                source: 'temporaryLines',
+                paint: {
+                    "line-color": "#800000",
+                    "line-width": 8
+                }
+            });
+        }
+    }
+    */
 }
