@@ -1,10 +1,4 @@
 export class LoopTimer {
-    timer;
-    callback;
-    delay;
-    timeStarted;
-    isStarted;
-    concurrentTimer;
     constructor(callback, delay) {
         this.callback = callback;
         this.delay = delay;

@@ -1,8 +1,4 @@
 export class ArbitraryInsertionAlgorithm {
-    artist;
-    map;
-    points;
-    path;
     constructor(artist, map) {
         this.artist = artist;
         this.map = map;
