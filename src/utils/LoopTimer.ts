@@ -6,6 +6,7 @@ export class LoopTimer {
     private isStarted: Boolean;
     private concurrentTimer: ReturnType<typeof setInterval> | undefined;
     
+    //Takes in a function to run every "tick" and a delay in ms
     constructor(callback: (args: any[]) => boolean, delay: number) {
         this.callback = callback;
         this.delay = delay;
