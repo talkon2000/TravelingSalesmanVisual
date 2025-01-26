@@ -27,9 +27,9 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
-      - name: Build and push to "dist"
+      - name: Build and push to "gh-pages" branch
         uses: alexthemaster/action-build-typescript@master
         with:
           pushToBranch: true
-          branch: 'dist'
+          branch: 'gh-pages'
           githubToken: ${{ secrets.GITHUB_TOKEN }}
