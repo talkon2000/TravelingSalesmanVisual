@@ -1,4 +1,3 @@
 export interface TSAlgorithm {
-    artist: any;
-    run(artist: any): boolean
+    run(delay: number): Promise<boolean>
 }
