@@ -1,15 +1,27 @@
-import GeoJSONFeature from "./GeoJSONFeature";
+import GeoJSONFeature from './GeoJSONFeature';
 
-export default class FeatureCollection implements GeoJSONFeature {
+export default class FeatureCollection<T> implements GeoJSONFeature {
     readonly type: string;
-    readonly features: GeoJSONFeature[];
+    features: T[];
 
-    constructor(features?: GeoJSONFeature[]) {
+    constructor(features?: T[]) {
         this.type = "FeatureCollection";
         if (features === undefined) {
             this.features = [];
         } else {
             this.features = features;
         }
+    }
+
+    addFeature(feature: T): void {
+        this.features.push(feature);
+    }
+
+    length(): number {
+        return this.features.length;
+    }
+
+    getFeatures(): T[] {
+        return this.features;
     }
 }

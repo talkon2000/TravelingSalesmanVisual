@@ -1,15 +1,92 @@
-import { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl";
+import mapboxgl, { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl";
 import FeatureCollection from "../features/FeatureCollection";
-import GeoJSONFeature from '../features/GeoJSONFeature';
 import LineFeature from "../features/LineFeature";
 import PointFeature from "../features/PointFeature";
 import RandomPointGenerator from "./RandomPointGenerator";
 
 export default class Artist {
 
-    private static permLineSource: string = "permLines";
-    private static tempLineSource: string = "tempLines";
-    private static pointSource: string = "points";
+    public static permLineSource: string = "permLines";
+    public static tempLineSource: string = "tempLines";
+    public static pointSource: string = "points";
+
+    /**
+     * This method ensures that the Map object passed to it has the necessary sources and layers to manipulate.
+     * @param map Map object
+     * @returns the modified map object
+     */
+    static async setupMap(map: Map): Promise<void> {
+        //Loads the iamge for the map pins
+        map.loadImage('../static/location-pin.png', (error, image) => {
+            if (error) throw error;
+            map.addImage('mapPin', image as ImageBitmap);
+        });
+
+        //Ensures sources for points, temporary lines, and permanent lines exist.
+        let pSource: GeoJSONSource | undefined = map.getSource(this.pointSource);
+        if (!pSource) {
+            map.addSource(this.pointSource, { type: 'geojson', data: JSON.stringify(new FeatureCollection()) });
+        } else {
+            pSource.setData(JSON.stringify(new FeatureCollection()));
+        }
+        let permSource: GeoJSONSource | undefined = map.getSource(this.permLineSource);
+        if (!permSource) {
+            map.addSource(this.permLineSource, { type: 'geojson', data: JSON.stringify(new FeatureCollection()) });
+        } else {
+            permSource.setData(JSON.stringify(new FeatureCollection()));
+        }
+        let tempSource: GeoJSONSource | undefined = map.getSource(this.tempLineSource);
+        if (!tempSource) {
+            map.addSource(this.tempLineSource, { type: 'geojson', data: JSON.stringify(new FeatureCollection()) });
+        } else {
+            tempSource.setData(JSON.stringify(new FeatureCollection()));
+        }
+
+        //Ensures layers for points, temporary lines, and permanent lines exist, and they are formatted correctly.
+        let pLayer = map.getLayer(this.pointSource);
+        if (pLayer) {
+            map.removeLayer(this.pointSource);
+        } 
+        map.addLayer({
+            id: this.pointSource,
+            type: 'symbol',
+            source: this.pointSource,
+            layout: {
+                'icon-image': 'mapPin',
+                'icon-size': .06,
+                'icon-allow-overlap': true
+            }
+        });
+        let permLayer = map.getLayer(this.permLineSource);
+        if (permLayer) {
+            map.removeLayer(this.permLineSource);
+        }
+        map.addLayer({
+            id: this.permLineSource,
+            type: 'line',
+            source: this.permLineSource,
+            paint: {
+                "line-color": "#000080",
+                "line-width": 6
+            }
+        });
+        let tempLayer = map.getLayer(this.tempLineSource);
+        if (tempLayer) {
+            map.removeLayer(this.tempLineSource);
+        }
+        map.addLayer({
+            id: this.tempLineSource,
+            type: 'line',
+            source: this.tempLineSource,
+            paint: {
+                "line-color": "#404040",
+                "line-width": 6
+            }
+        });
+
+        //Draws the default points
+        await Artist.drawDefaultPoints(map);
+    }
 
     /**
      * Clears the map of points and lines, then draws random points within the bounds of the map.
@@ -23,12 +100,12 @@ export default class Artist {
         let numRandomPoints: number = +(document.getElementById("numRandomPoints") as HTMLInputElement).value;
 
         //Generate random points
-        let geoPoints: FeatureCollection = RandomPointGenerator.generate(map.getBounds(), numRandomPoints);
+        let geoPoints: PointFeature[] = RandomPointGenerator.generate(map.getBounds(), numRandomPoints);
 
         //Ensure source "points" exists, then set the data
         let source: GeoJSONSource | undefined = map.getSource(this.pointSource);
         if (source) {
-            source.setData(JSON.stringify(geoPoints));
+            source.setData(JSON.stringify(new FeatureCollection(geoPoints)));
         }
         else {
             map.addSource(this.pointSource, { type: 'geojson', data: JSON.stringify(geoPoints) });
@@ -44,7 +121,7 @@ export default class Artist {
      */
     static async drawDefaultPoints(map: Map) {
         //Fetch the default points JSON
-        const file = await fetch('../static/defaultPoints.geojson');
+        const file = await fetch('../../static/defaultPoints.geojson');
         const data = await file.json();
 
         //Ensure source "points" exists, then set the data
@@ -67,10 +144,10 @@ export default class Artist {
      */
     static drawSinglePoint(p: LngLat, map: Map): void {
         let source: GeoJSONSource | undefined = map.getSource(this.pointSource);
-        let data: FeatureCollection;
+        let data: FeatureCollection<PointFeature>;
         let point: PointFeature = this.createPointFeature(p);
         if (source) {
-            data = JSON.parse(source._data as string) as FeatureCollection;
+            data = JSON.parse(source._data as string);
             data.addFeature(point);
             source.setData(JSON.stringify(data));
         }
@@ -88,12 +165,10 @@ export default class Artist {
      * @param path FeatureCollection object consisting of PointFeatures
      * @param map Map object to draw the path on
      */
-    static drawPath(path: FeatureCollection, map: Map): void {
-        let points: PointFeature[] = path.getFeatures() as PointFeature[];
-
+    static drawPath(path: PointFeature[], map: Map): void {
         //Crate each line feature and add it to the data
-        for (let i = 0; i < path.length() - 1; i++) {
-            this.drawPermLine(points[i], points[i + 1], map);
+        for (let i = 0; i < path.length - 1; i++) {
+            this.drawPermLine(path[i], path[i + 1], map);
         }
     }
 
@@ -129,12 +204,12 @@ export default class Artist {
      * @returns the LineFeature object that was created.
      */
     private static drawLine(p1: PointFeature, p2: PointFeature, map: Map, sourceString: string): LineFeature {
-        let data: FeatureCollection;
+        let data: FeatureCollection<LineFeature>;
         let line: LineFeature = this.createLineFeature(p1, p2);
 
         let source: GeoJSONSource | undefined = map.getSource(sourceString);
         if (source) {
-            data = JSON.parse(source._data as string) as FeatureCollection;
+            data = JSON.parse(source._data as string);
             data.addFeature(line);
             source.setData(JSON.stringify(data));
         }
