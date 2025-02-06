@@ -1,4 +1,4 @@
-import mapboxgl, { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl";
+import { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl";
 import FeatureCollection from "../features/FeatureCollection";
 import LineFeature from "../features/LineFeature";
 import PointFeature from "../features/PointFeature";
@@ -92,13 +92,7 @@ export default class Artist {
      * Clears the map of points and lines, then draws random points within the bounds of the map.
      * @param map Map object to draw points on
      */
-    static drawRandomPoints(map: Map): void {
-        //Get number of random points
-        if (document === null || document.getElementById("numRandomPoints") === null) {
-            throw "Cannot find number of random points.";
-        }
-        let numRandomPoints: number = +(document.getElementById("numRandomPoints") as HTMLInputElement).value;
-
+    static drawRandomPoints(map: Map, numRandomPoints: number): void {
         //Generate random points
         let geoPoints: PointFeature[] = RandomPointGenerator.generate(map.getBounds(), numRandomPoints);
 

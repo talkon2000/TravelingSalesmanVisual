@@ -1,4 +1,4 @@
-export class LoopTimer {
+export default class LoopTimer {
     private timer: ReturnType<typeof setInterval> | undefined;
     private callback: (...args: any[]) => Promise<boolean>;
     private delay: number;
