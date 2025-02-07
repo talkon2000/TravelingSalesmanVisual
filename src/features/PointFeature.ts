@@ -1,4 +1,4 @@
-import GeoJSONFeature from './GeoJSONFeature';
+import GeoJSONFeature from './GeoJSONFeature.ts';
 export default class PointFeature implements GeoJSONFeature {
     readonly type: string = "Feature";
     geometry: {

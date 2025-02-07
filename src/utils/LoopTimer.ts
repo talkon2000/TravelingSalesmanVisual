@@ -1,13 +1,13 @@
 export default class LoopTimer {
     private timer: ReturnType<typeof setInterval> | undefined;
-    private callback: (...args: any[]) => Promise<boolean>;
+    private callback: (delay: number) => Promise<boolean>;
     private delay: number;
     private timeStarted: Date;
     private isStarted: Boolean;
     private concurrentTimer: ReturnType<typeof setInterval> | undefined;
     
     //Takes in a function to run every "tick" and a delay in ms
-    constructor(callback: (args: any[]) => Promise<boolean>, delay: number) {
+    constructor(callback: (delay: number) => Promise<boolean>, delay: number) {
         this.callback = callback;
         this.delay = delay;
         this.isStarted = false;
@@ -50,8 +50,7 @@ export default class LoopTimer {
                 if (await this.callback(this.delay) == false) {
                     this.stop();
                 }
-            }
-                , this.delay);
+            }, this.delay);
             this.isStarted = true;
             this.timeStarted = new Date();
         }

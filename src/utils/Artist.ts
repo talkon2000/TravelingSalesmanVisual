@@ -1,8 +1,8 @@
-import { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl";
-import FeatureCollection from "../features/FeatureCollection";
-import LineFeature from "../features/LineFeature";
-import PointFeature from "../features/PointFeature";
-import RandomPointGenerator from "./RandomPointGenerator";
+import { GeoJSONSource, LngLat, Map } from "../../node_modules/mapbox-gl/dist/mapbox-gl.js";
+import FeatureCollection from "../features/FeatureCollection.ts";
+import LineFeature from "../features/LineFeature.ts";
+import PointFeature from "../features/PointFeature.ts";
+import RandomPointGenerator from "./RandomPointGenerator.ts";
 
 export default class Artist {
 
@@ -115,11 +115,12 @@ export default class Artist {
      */
     static async drawDefaultPoints(map: Map) {
         //Fetch the default points JSON
-        const file = await fetch('../../static/defaultPoints.geojson');
+        const file = await fetch('../static/defaultPoints.geojson');
         const data = await file.json();
 
         //Ensure source "points" exists, then set the data
         let source: GeoJSONSource | undefined = map.getSource(this.pointSource);
+        console.log(source);
         if (source) {
             source.setData(data);
         }

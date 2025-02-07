@@ -1,5 +1,5 @@
 import { LngLatBounds } from "../../node_modules/mapbox-gl/dist/mapbox-gl.js";
-import PointFeature from "../features/PointFeature";
+import PointFeature from "../features/PointFeature.ts";
 
 export default abstract class RandomPointGenerator {
 

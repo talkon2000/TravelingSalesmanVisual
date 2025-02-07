@@ -1,7 +1,7 @@
-import { GeoJSONSource, Map } from "../../../node_modules/mapbox-gl/dist/mapbox-gl";
-import PointFeature from "../../features/PointFeature";
-import Artist from "../../utils/Artist";
-import { TSAlgorithm } from "../TSAlgorithm";
+import { GeoJSONSource, Map } from "../../../node_modules/mapbox-gl/dist/mapbox-gl.js";
+import PointFeature from "../../features/PointFeature.ts";
+import Artist from "../../utils/Artist.ts";
+import { TSAlgorithm } from "../TSAlgorithm.ts";
 
 export default class ArbitraryInsertionAlgorithm implements TSAlgorithm {
 
